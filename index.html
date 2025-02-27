@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        /* Color Scheme */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FFFFFF;
+            --accent-color: #FFC107;
+            --background-color: #F5F5F5;
+            --text-color: #212121;
+            --box-shadow-color: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode {
+            --background-color: #212121;
+            --text-color: #FFFFFF;
+            --box-shadow-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 10px 0;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 5px var(--box-shadow-color);
+        }
+
+        nav ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Main Game Area */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: var(--secondary-color);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px var(--box-shadow-color);
+        }
+
+        .cell:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .cell:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Player Turn Indicator */
+        #player-turn {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Reset Button */
+        #reset-button {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px var(--box-shadow-color);
+        }
+
+        #reset-button:hover {
+            background-color: var(--accent-color);
+        }
+
+        #reset-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--accent-color);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            position: fixed;
+            bottom: 0;
+        }
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px var(--box-shadow-color);
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* Accessibility */
+        [aria-label]:hover::after,
+        [aria-label]:focus::after {
+            content: attr(aria-label);
+            position: absolute;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 1;
+            white-space: nowrap;
+        }
+        /* Scoreboard */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            text-align: center;
+        }
+
+        .score p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Toggle Dark Mode</button>
+    <header>
+        <h1>Tic Tac Toe</h1>
+        <nav>
+            <ul>
+                <li><a href="#" aria-label="Home">Home</a></li>
+                <li><a href="#" aria-label="Instructions">Instructions</a></li>
+                <li><a href="#" aria-label="About">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="game-container">
+        <div class="scoreboard">
+            <div class="score">
+                <p>Player X</p>
+                <p id="score-x">0</p>
+            </div>
+            <div class="score">
+                <p>Player O</p>
+                <p id="score-o">0</p>
+            </div>
+        </div>
+        <div id="player-turn">Player X's turn</div>
+        <div class="grid" role="grid">
+            <div class="cell" onclick="makeMove(0)" tabindex="0" role="button" aria-label="Cell 1"></div>
+            <div class="cell" onclick="makeMove(1)" tabindex="0" role="button" aria-label="Cell 2"></div>
+            <div class="cell" onclick="makeMove(2)" tabindex="0" role="button" aria-label="Cell 3"></div>
+            <div class="cell" onclick="makeMove(3)" tabindex="0" role="button" aria-label="Cell 4"></div>
+            <div class="cell" onclick="makeMove(4)" tabindex="0" role="button" aria-label="Cell 5"></div>
+            <div class="cell" onclick="makeMove(5)" tabindex="0" role="button" aria-label="Cell 6"></div>
+            <div class="cell" onclick="makeMove(6)" tabindex="0" role="button" aria-label="Cell 7"></div>
+            <div class="cell" onclick="makeMove(7)" tabindex="0" role="button" aria-label="Cell 8"></div>
+            <div class="cell" onclick="makeMove(8)" tabindex="0" role="button" aria-label="Cell 9"></div>
+        </div>
+        <button id="reset-button" onclick="resetGame()" tabindex="0" role="button" aria-label="Reset Game">Reset Game</button>
+    </div>
+
+    <footer>
+        © 2023 Tic Tac Toe
+    </footer>
+
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        let scoreX = 0;
+        let scoreO = 0;
+
+        function makeMove(index) {
+            if (gameBoard[index] === '' && gameActive) {
+                gameBoard[index] = currentPlayer;
+                document.getElementsByClassName('cell')[index].innerText = currentPlayer;
+                document.getElementsByClassName('cell')[index].setAttribute('aria-label', `Cell ${index + 1}, ${currentPlayer}`);
+
+                if (checkWin()) {
+                    document.getElementById('player-turn').innerText = `${currentPlayer} wins!`;
+                    updateScore();
+                    gameActive = false;
+                } else if (gameBoard.every(cell => cell !== '')) {
+                    document.getElementById('player-turn').innerText = 'It\'s a draw!';
+                    gameActive = false;
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                    document.getElementById('player-turn').innerText = `Player ${currentPlayer}'s turn`;
+                }
+            }
+        }
+
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]             // Diagonals
+            ];
+
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function resetGame() {
+            currentPlayer = 'X';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            document.getElementById('player-turn').innerText = `Player ${currentPlayer}'s turn`;
+            const cells = document.getElementsByClassName('cell');
+            for (const cell of cells) {
+                cell.innerText = '';
+                cell.setAttribute('aria-label', cell.getAttribute('aria-label').replace(/, [XO]$/, ''));
+            }
+        }
+        function updateScore() {
+            if (currentPlayer === 'X') {
+                scoreX++;
+                document.getElementById('score-x').innerText = scoreX;
+            } else {
+                scoreO++;
+                document.getElementById('score-o').innerText = scoreO;
+            }
+        }
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+    </script>
+</body>
+</html>
